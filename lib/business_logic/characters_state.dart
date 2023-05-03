@@ -10,3 +10,8 @@ class CharactersLoaded extends CharactersState {
 
   CharactersLoaded(this.result);
 }
+class EpisodeLoaded extends CharactersState {
+  final List<Episode> episode;
+
+  EpisodeLoaded(this.episode);
+}

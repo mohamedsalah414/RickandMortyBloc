@@ -4,6 +4,7 @@ import 'package:blocproject/data/model/character.dart';
 import 'package:blocproject/presentaion/widgets/character_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 class CharactersScreen extends StatefulWidget {
   const CharactersScreen({Key? key}) : super(key: key);
@@ -74,18 +75,20 @@ class _CharactersScreenState extends State<CharactersScreen> {
       _isSearching = true;
     });
   }
-  void _stopSearching(){
+
+  void _stopSearching() {
     _clearSearch();
     setState(() {
       _isSearching = false;
     });
   }
 
-  _clearSearch(){
+  _clearSearch() {
     setState(() {
       searchedForCharacters.clear();
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -135,8 +138,9 @@ class _CharactersScreenState extends State<CharactersScreen> {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       padding: EdgeInsets.zero,
-      itemCount:_searchTextController.text.isEmpty
-          ? allResults.length : searchedForCharacters.length,
+      itemCount: _searchTextController.text.isEmpty
+          ? allResults.length
+          : searchedForCharacters.length,
       itemBuilder: (context, index) {
         return CharacterItem(
           results: _searchTextController.text.isEmpty
@@ -147,23 +151,56 @@ class _CharactersScreenState extends State<CharactersScreen> {
     );
   }
 
-  Widget _buildAppBarTitle(){
+  Widget _buildAppBarTitle() {
     return const Text(
       'Characters',
       style: TextStyle(color: MyColor.myGrey),
     );
   }
 
+  Widget buildNoInternet() {
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'No Internet',
+              style: TextStyle(fontSize: 20, color: MyColor.myGrey),
+            ),
+            Image.asset('assets/images/undraw_going_offline_ihag.png')
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MyColor.myYellow,
-        leading: _isSearching?BackButton(color: MyColor.myGrey,):Container(),
-        title: _isSearching?_buildSearchField():_buildAppBarTitle(),
-        actions: _buildAppBarAction(),
-      ),
-      body: buildBlocBuilder(),
-    );
+        appBar: AppBar(
+          backgroundColor: MyColor.myYellow,
+          leading: _isSearching
+              ? const BackButton(
+                  color: MyColor.myGrey,
+                )
+              : Container(),
+          title: _isSearching ? _buildSearchField() : _buildAppBarTitle(),
+          actions: _buildAppBarAction(),
+        ),
+        body: OfflineBuilder(
+          connectivityBuilder: (context, value, child) {
+            final connected = value != ConnectivityResult.none;
+            if (connected) {
+              return buildBlocBuilder();
+            } else {
+              return buildNoInternet();
+            }
+          },
+          child: showLoadingIndicator(),
+        ));
   }
 }

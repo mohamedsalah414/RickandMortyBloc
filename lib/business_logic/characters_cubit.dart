@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:blocproject/data/model/character.dart';
+import 'package:blocproject/data/model/episode.dart';
 import 'package:blocproject/data/repository/character_repository.dart';
 import 'package:meta/meta.dart';
 
@@ -16,5 +17,10 @@ class CharactersCubit extends Cubit<CharactersState> {
        this.results = results;
      });
      return results;
+   }
+   void getSingleEpisode() {
+     charactersRepository.getSingleEpisode().then((episode) {
+       emit(EpisodeLoaded(episode));
+     });
    }
 }

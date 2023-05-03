@@ -25,11 +25,16 @@ class AppRouter {
             create: (context) => CharactersCubit(charactersRepository),
             child: const CharactersScreen(),
           ),
-         );
+        );
       case characterDetailsScreen:
         final character = settings.arguments as Results;
         return MaterialPageRoute(
-          builder: (_) =>  CharacterDetailsScreen(character : character),
+          builder: (_) => BlocProvider(
+            create: (context) => CharactersCubit(charactersRepository),
+            child: CharacterDetailsScreen(
+              character: character,
+            ),
+          ),
         );
     }
   }

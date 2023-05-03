@@ -1,5 +1,6 @@
 import 'package:blocproject/constants/strings.dart';
 import 'package:blocproject/data/model/character.dart';
+import 'package:blocproject/data/model/episode.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,21 @@ class CharacterWebServices {
     try {
       List<Map<String, dynamic>> allEntities = [];
       Response response = await dio.get('character');
+      debugPrint('response is $response');
+      allEntities.addAll(
+          List<Map<String, dynamic>>.from(response.data["results"]));
+      return allEntities;
+    } catch (e) {
+      debugPrint('error is $e');
+      return [];
+    }
+  }
+  Future< List<Map<String, dynamic>>> getAllEpisode() async {
+    try {
+      List<Map<String, dynamic>> allEntities = [];
+      Response response = await dio.get('episode');
+      debugPrint('response is $response');
+
       allEntities.addAll(
           List<Map<String, dynamic>>.from(response.data["results"]));
       return allEntities;
